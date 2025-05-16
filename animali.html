@@ -12,27 +12,38 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Il codice React va scritto qui, per la conversione in JSX -->
     <script type="text/babel">
+    
+    const animalChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];   
 
-        // dichiaro un array statico che contiene gli animali
+    function App () {
         
-        const ListaAnimali = ["cane", "gatto", "uccello", "serpente"]
+    const [animals, setAnimals] = React.useState([]);
 
-// dichiaro una funzione che utilizza un map dell'array per restituire tramite props gli animali all'interno degli li nella ul
-        function App () {
-            return (
-                <details>
-                    <h1>Animali</h1>
-                    <ul>
-                        {ListaAnimali.map ( Animale => <li key={Animale}>{Animale}</li> )}
-                    </ul>
-                </details>
-            );
-        }
+    function aggiungiAnimale() {
+      const randomAnimal = animalChoices[Math.floor(Math.random() * animalChoices.length)];
+      setAnimals([...animals, randomAnimal]);
+    }
 
-        const rootElement = document.querySelector('.lista-animali');
-        const root = ReactDOM.createRoot(rootElement);
-        root.render(<App />)
-    </script>
+    return (
+      <>
+        <button onClick={aggiungiAnimale}>Aggiungi Animale</button>
+        <details>
+          <summary>Animali</summary>
+          <ul>
+            {animals.map((animal, index) => (
+              <li key={animal + index}>{animal}</li>
+            ))}
+          </ul>
+        </details>
+      </>
+    );
+  }
+
+  const rootElement = document.querySelector('.lista-animali');
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(<App />);
+</script>
+
 </head>
 <body>
     <header>
