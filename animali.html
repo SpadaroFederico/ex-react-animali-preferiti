@@ -13,35 +13,83 @@
     <!-- Il codice React va scritto qui, per la conversione in JSX -->
     <script type="text/babel">
     
-    const animalChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];   
+    const animalChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
 
-    function App () {
-        
-    const [animals, setAnimals] = React.useState([]);
+// ✅ Componente Modal riutilizzabile
+function Modal({ title, content, show = false, onClose = () => {}, onConfirm = () => {} }) {
+  return show && ReactDOM.createPortal(
+    <div className="modal-container">
+      <div className="modal">
+        <h2>{title}</h2>
+        <div>{content}</div>
+        <div className="modal-actions">
+          <button onClick={onClose}>Annulla</button>
+          <button onClick={onConfirm}>Conferma</button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
 
-    function aggiungiAnimale() {
-      const randomAnimal = animalChoices[Math.floor(Math.random() * animalChoices.length)];
-      setAnimals([...animals, randomAnimal]);
-    }
+function App() {
+  const [animals, setAnimals] = React.useState([]);
+  const [showModal, setShowModal] = React.useState(false);
+  const [newAnimal, setNewAnimal] = React.useState("");
 
-    return (
-      <>
-        <button onClick={aggiungiAnimale}>Aggiungi Animale</button>
-        <details>
-          <summary>Animali</summary>
-          <ul>
-            {animals.map((animal, index) => (
-              <li key={animal + index}>{animal}</li>
-            ))}
-          </ul>
-        </details>
-      </>
-    );
+  function apriModale() {
+    setShowModal(true);
   }
 
-  const rootElement = document.querySelector('.lista-animali');
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(<App />);
+  function confermaAggiunta() {
+    if (newAnimal.trim()) {
+      setAnimals([...animals, newAnimal.trim()]);
+    }
+    setNewAnimal("");
+    setShowModal(false);
+  }
+
+  function annullaAggiunta() {
+    setNewAnimal("");
+    setShowModal(false);
+  }
+
+  return (
+    <>
+      <button onClick={apriModale}>Aggiungi Animale</button>
+      <details>
+        <summary>Animali</summary>
+        <ul>
+          {animals.map((animal, index) => (
+            <li key={animal + index}>{animal}</li>
+          ))}
+        </ul>
+      </details>
+
+      {/* ✅ Modale per inserire il nome */}
+      <Modal
+        title="Inserisci un nuovo animale"
+        show={showModal}
+        onClose={annullaAggiunta}
+        onConfirm={confermaAggiunta}
+        content={
+          <input
+            type="text"
+            placeholder="Es. Elefante"
+            value={newAnimal}
+            onChange={(e) => setNewAnimal(e.target.value)}
+          />
+        }
+      />
+    </>
+  );
+}
+
+// ✅ Punto di montaggio React
+const rootElement = document.querySelector(".lista-animali");
+const root = ReactDOM.createRoot(rootElement);
+root.render(<App />);
+
 </script>
 
 </head>
